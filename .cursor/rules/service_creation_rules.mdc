@@ -1,0 +1,206 @@
+# Правила создания микросервисов в NeuroAdmin
+
+При создании нового микросервиса в проекте NeuroAdmin следуй этим правилам:
+
+## Структура сервиса
+
+```
+service-name/
+├── service-name.csproj
+├── Program.cs
+├── appsettings.json
+├── appsettings.Development.json
+├── nlog.config (если используется)
+├── Properties/
+│   └── launchSettings.json
+├── Controllers/
+├── Services/
+├── Configuration/
+├── Middleware/
+├── Logging/
+└── Models/
+```
+
+## Конвенции именования
+
+### Namespace (RootNamespace в .csproj)
+- **Формат:** PascalCase БЕЗ подчеркиваний
+- **Примеры:** `AuthService`, `BotDetectionService`, `TaskManagementService`
+- **НЕ использовать:** `auth_service`, `auth-service`, `Auth_Service`
+
+### Имена папок
+- **Формат:** kebab-case
+- **Примеры:** `api-gateway`, `auth-service`, `bot-detection-service`
+
+### Классы и интерфейсы
+- Классы: PascalCase (`AuthController`, `UserService`)
+- Интерфейсы: `I` + PascalCase (`IAuthService`, `IUserRepository`)
+- Приватные поля: `_` + camelCase (`_authService`, `_logger`)
+- Public static readonly (LoggerMessage): PascalCase БЕЗ `_` (`LogRegisterError`)
+- Методы: PascalCase (`GetUserAsync`, `CreateTaskAsync`)
+
+## Шаблон .csproj
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>ServiceName</RootNamespace>
+    <!-- Остальные настройки из Directory.Build.props -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.0" />
+    <!-- Дополнительные пакеты по необходимости -->
+  </ItemGroup>
+</Project>
+```
+
+**КРИТИЧНО:**
+- RootNamespace должен быть PascalCase (например, `AuthService`, а не `auth-service` или `auth_service`)
+- Используется `Microsoft.NET.Sdk.Web` для API сервисов
+
+## Шаблон Program.cs
+
+1. Configure NLog
+2. Add services (Controllers, OpenAPI)
+3. Configure ServiceUrls (если нужно)
+4. Configure CORS (если нужно)
+5. Configure JWT (если нужно)
+6. Configure Polly/Refit клиенты (если нужно)
+7. Register application services
+8. Configure middleware pipeline (ErrorHandlingMiddleware должен быть первым)
+
+## Контроллеры
+
+- Используй file-scoped namespaces
+- Всегда используй dependency injection
+- Всегда логируй ошибки через `LoggerDefinitions` из папки `Logging/`
+- Используй async/await для всех операций
+- Возвращай `ObjectResult` из методов `HandleRefitResponse` (для производительности)
+
+Пример:
+```csharp
+using ServiceName.Logging;
+using ServiceName.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ServiceName.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class SomeController : ControllerBase
+{
+    private readonly ISomeService _someService;
+    private readonly ILogger<SomeController> _logger;
+
+    public SomeController(ISomeService someService, ILogger<SomeController> logger)
+    {
+        _someService = someService;
+        _logger = logger;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        try
+        {
+            var result = await _someService.GetAsync();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            LoggerDefinitions.LogSomeError(_logger, ex);
+            return StatusCode(500, new { error = "Internal server error" });
+        }
+    }
+}
+```
+
+## Логирование
+
+- ВСЕГДА используй централизованные LoggerMessage делегаты из `Logging/LoggerDefinitions.cs`
+- НЕ создавай новые делегаты в контроллерах/сервисах - добавляй их в LoggerDefinitions.cs
+- Используй правильные диапазоны EventId:
+  - 1000-1999: Auth Service
+  - 2000-2999: Bot Detection Service
+  - 3000-3999: Social Accounts
+  - 4000-4999: Task Management Service
+  - 5000-5999: VK Service
+  - 6000-6999: OK Service
+  - 9000-9999: Common/Middleware
+
+Формат делегата:
+```csharp
+public static readonly Action<ILogger, Exception> LogOperationError =
+    LoggerMessage.Define(
+        LogLevel.Error,
+        new EventId(XXXX, "OperationError"),
+        "Error occurred during operation");
+```
+
+## Порты для сервисов
+
+- API Gateway: 5220 (http), 7191 (https)
+- Auth Service: 5001
+- Bot Detection Service: 5002
+- VK Service: 5003
+- OK Service: 5004
+- Task Management Service: 5005
+- Новые сервисы: начиная с 5006
+
+## Конфигурация
+
+### appsettings.json
+Должен включать:
+- Logging секцию
+- AllowedHosts
+- ServiceUrls (если сервис вызывает другие)
+- Jwt (если требуется аутентификация)
+- Cors (если нужно)
+- ConnectionStrings (если используется БД)
+
+### launchSettings.json
+- http профиль: `http://localhost:5XXX`
+- https профиль: `https://localhost:7XXX;http://localhost:5XXX`
+
+## Тестирование
+
+Создавай проект тестов:
+- Имя: `service-name-tests`
+- Проект файл: `service-name.Tests.csproj`
+- RootNamespace: `ServiceName.Tests`
+- Используй xUnit, Moq, FluentAssertions
+
+## Интеграция с другими сервисами
+
+Если сервис вызывает другой сервис:
+1. Создай Refit интерфейс в папке `Services/`
+2. Имя: `I[ServiceName]Client`
+3. Используй атрибуты Refit: `[Get]`, `[Post]`, `[Header]`, `[Body]`
+4. Зарегистрируй в Program.cs с Polly политиками (retry + circuit breaker)
+
+## Обновление зависимостей
+
+После создания нового сервиса:
+1. Добавь URL в `api-gateway/Configuration/ServiceUrls.cs`
+2. Обнови `api-gateway/appsettings.json`
+3. Добавь Refit клиент в `api-gateway/Program.cs` (если вызывается из gateway)
+4. Добавь проект в `NeuroAdminApp.sln`
+
+## Важные правила
+
+1. **ВСЕГДА** используй PascalCase для namespace (RootNamespace)
+2. **НИКОГДА** не используй подчеркивания в namespace
+3. **ВСЕГДА** используй LoggerDefinitions для логирования ошибок
+4. **ВСЕГДА** обрабатывай исключения в контроллерах
+5. **ВСЕГДА** используй async/await для асинхронных операций
+6. **ВСЕГДА** добавляй XML комментарии для публичных классов/методов
+7. **ВСЕГДА** следуй структуре папок из шаблона
+8. **ВСЕГДА** создавай тестовый проект параллельно с основным сервисом
+
+## Ссылки
+
+- Полный шаблон: `docs/SERVICE_TEMPLATE.md`
+- Правила форматирования: `.editorconfig`
+- Общие настройки: `Directory.Build.props`
