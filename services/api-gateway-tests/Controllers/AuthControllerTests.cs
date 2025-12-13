@@ -1,5 +1,5 @@
-using api_gateway.Controllers;
-using api_gateway.Services;
+using ApiGateway.Controllers;
+using ApiGateway.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using Refit;
 using System.Net;
 using Xunit;
 
-namespace api_gateway.Tests.Controllers;
+namespace ApiGateway.Tests.Controllers;
 
 public class AuthControllerTests
 {

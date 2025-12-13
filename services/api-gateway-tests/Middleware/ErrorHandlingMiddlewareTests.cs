@@ -1,14 +1,14 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using api_gateway.Middleware;
+using ApiGateway.Middleware;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace api_gateway.Tests.Middleware;
+namespace ApiGateway.Tests.Middleware;
 
 public class ErrorHandlingMiddlewareTests
 {
@@ -51,7 +51,7 @@ public class ErrorHandlingMiddlewareTests
         // Assert
         context.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         context.Response.ContentType.Should().Be("application/json");
-        
+
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync();
@@ -74,7 +74,7 @@ public class ErrorHandlingMiddlewareTests
         // Assert
         context.Response.StatusCode.Should().Be((int)HttpStatusCode.BadGateway);
         context.Response.ContentType.Should().Be("application/json");
-        
+
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync();

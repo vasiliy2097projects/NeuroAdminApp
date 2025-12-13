@@ -1,6 +1,6 @@
 using Refit;
 
-namespace api_gateway.Services;
+namespace ApiGateway.Services;
 
 /// <summary>
 /// Refit интерфейс для вызовов Auth Service

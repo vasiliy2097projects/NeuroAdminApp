@@ -1,7 +1,8 @@
 using System.Net;
 using System.Text.Json;
+using ApiGateway.Logging;
 
-namespace api_gateway.Middleware;
+namespace ApiGateway.Middleware;
 
 /// <summary>
 /// Middleware для обработки ошибок
@@ -19,13 +20,15 @@ public class ErrorHandlingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         try
         {
             await _next(context);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unhandled exception occurred");
+            LoggerDefinitions.LogUnhandledException(_logger, ex);
             await HandleExceptionAsync(context, ex);
         }
     }

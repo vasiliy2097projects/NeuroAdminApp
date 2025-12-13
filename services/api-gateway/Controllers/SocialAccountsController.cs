@@ -1,8 +1,9 @@
-using api_gateway.Services;
+using ApiGateway.Logging;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api_gateway.Controllers;
+namespace ApiGateway.Controllers;
 
 /// <summary>
 /// Контроллер для проксирования запросов к VK и OK Services
@@ -37,7 +38,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling VK service get user profile");
+            LoggerDefinitions.LogGetVkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -53,7 +54,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling VK service get followers");
+            LoggerDefinitions.LogGetVkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -69,7 +70,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling OK service get user profile");
+            LoggerDefinitions.LogGetOkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -85,12 +86,12 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling OK service get followers");
+            LoggerDefinitions.LogGetOkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
 
-    private IActionResult HandleRefitResponse(Refit.IApiResponse<object> response)
+    private ObjectResult HandleRefitResponse(Refit.IApiResponse<object> response)
     {
         // For error responses, content is in Error.Content, not Content
         var content = response.IsSuccessStatusCode ? response.Content : response.Error?.Content ?? response.Content;

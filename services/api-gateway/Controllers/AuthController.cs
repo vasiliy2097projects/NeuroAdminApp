@@ -1,7 +1,8 @@
-using api_gateway.Services;
+using ApiGateway.Logging;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api_gateway.Controllers;
+namespace ApiGateway.Controllers;
 
 /// <summary>
 /// Контроллер для проксирования запросов к Auth Service
@@ -29,7 +30,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service register");
+            LoggerDefinitions.LogRegisterError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -44,7 +45,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service login");
+            LoggerDefinitions.LogLoginError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -59,7 +60,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service refresh token");
+            LoggerDefinitions.LogRefreshTokenError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -76,7 +77,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service logout");
+            LoggerDefinitions.LogLogoutError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -93,14 +94,14 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service get current user");
+            LoggerDefinitions.LogGetCurrentUserError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
 
-    private IActionResult HandleRefitResponse(Refit.IApiResponse<object> response)
+    private ObjectResult HandleRefitResponse(Refit.IApiResponse<object> response)
     {
-        // For error responses, content is in Error.Content, not Content
+        // For error responses, content is in Error.Content, not Content 
         var content = response.IsSuccessStatusCode ? response.Content : response.Error?.Content ?? response.Content;
         return StatusCode((int)response.StatusCode, content);
     }

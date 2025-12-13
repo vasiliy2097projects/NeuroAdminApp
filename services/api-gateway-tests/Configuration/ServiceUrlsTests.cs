@@ -1,8 +1,8 @@
-using api_gateway.Configuration;
+using ApiGateway.Configuration;
 using FluentAssertions;
 using Xunit;
 
-namespace api_gateway.Tests.Configuration;
+namespace ApiGateway.Tests.Configuration;
 
 public class ServiceUrlsTests
 {
