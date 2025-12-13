@@ -1,0 +1,237 @@
+# NeuroAdmin Design System Rules
+
+## Design Token Definitions
+
+### Colors
+
+- **Location:** `docs/STYLE_GUIDE.md`
+- **Format:** Hex colors with Material Design naming
+- **Primary:** #2196F3 (Blue)
+- **Secondary:** #9C27B0 (Purple)
+- **Status Colors:** Success (#4CAF50), Warning (#FF9800), Error (#F44336), Info (#2196F3)
+- **Grays:** 50-900 scale (#FAFAFA to #212121)
+
+### Typography
+
+- **Font Family:** 'Roboto', 'Inter', system fonts
+- **Headings:** H1 (40px) to H6 (18px)
+- **Body:** 16px (Body1), 14px (Body2)
+- **Special:** Button (14px, uppercase), Caption (12px), Overline (12px, uppercase)
+
+### Spacing
+
+- **Base Unit:** 8px
+- **Scale:** 0, 8px, 16px, 24px, 32px, 40px, 48px, 64px, 80px, 96px
+- **Usage:** Padding, margins, gaps
+
+### Border Radius
+
+- **Small:** 4px (buttons, inputs)
+- **Medium:** 8px (cards)
+- **Large:** 12px (modals)
+- **Round:** 50% (avatars, icons)
+
+### Shadows (Elevation)
+
+- **Levels:** 0-24
+- **Usage:** Cards (Elevation 1-2), Modals (Elevation 8-24)
+
+## Component Library
+
+### Location
+
+- **Specifications:** `docs/COMPONENTS_SPEC.md`
+- **Framework:** Material-UI (MUI) v5
+- **Components:** React + TypeScript
+
+### Component Architecture
+
+- **Base Components:** Button, Input, Card, Table, Modal, Badge, Progress, Loading, Alert, Select, Checkbox, Radio, Tabs
+- **Layout Components:** Header, Sidebar, Footer, Container, Grid
+- **Pattern:** Material-UI components with custom theme
+
+### Component Structure
+
+```typescript
+// Example: Button component
+<Button
+  variant="primary" | "secondary" | "outlined" | "text"
+  size="small" | "medium" | "large"
+  disabled={boolean}
+  startIcon={ReactNode}
+  endIcon={ReactNode}
+/>
+```
+
+## Frameworks & Libraries
+
+### UI Framework
+
+- **React:** 18.x
+- **TypeScript:** 5.x
+- **Material-UI:** v5 (@mui/material)
+- **State Management:** Redux Toolkit
+
+### Styling
+
+- **Approach:** Material-UI theme customization
+- **Method:** Theme provider with custom palette and typography
+- **Responsive:** MUI breakpoints (xs, sm, md, lg, xl)
+
+### Build System
+
+- **Bundler:** Vite
+- **Package Manager:** npm/yarn
+
+## Asset Management
+
+### Icons
+
+- **Library:** Material Icons
+- **Sizes:** 16px, 20px, 24px, 32px, 48px
+- **Import:** `@mui/icons-material`
+- **Naming:** kebab-case (e.g., `add-circle`, `delete-outline`)
+
+### Images
+
+- **Location:** `frontend/src/assets/images/`
+- **Format:** Optimized PNG, SVG, WebP
+- **Naming:** kebab-case
+
+## Icon System
+
+### Usage Pattern
+
+```typescript
+import { Add, Delete, Edit } from "@mui/icons-material";
+
+<IconButton>
+  <Add />
+</IconButton>;
+```
+
+### Sizes
+
+- Small: 16px
+- Medium: 24px (default)
+- Large: 32px
+
+## Styling Approach
+
+### Theme Configuration
+
+```typescript
+import { createTheme } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    primary: { main: "#2196F3" },
+    secondary: { main: "#9C27B0" },
+    // ... full palette from STYLE_GUIDE.md
+  },
+  typography: {
+    fontFamily: "'Roboto', 'Inter', sans-serif",
+    // ... typography from STYLE_GUIDE.md
+  },
+  spacing: 8, // base unit
+  shape: {
+    borderRadius: 4, // small
+  },
+});
+```
+
+### Component Styling
+
+- **Method:** Material-UI `sx` prop or `styled` API
+- **No global CSS:** Use theme and component-level styling
+- **Responsive:** MUI breakpoints in `sx` prop
+
+## Project Structure
+
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── ui/          # Base UI components
+│   │   ├── layout/      # Layout components
+│   │   └── features/    # Feature-specific components
+│   ├── theme/
+│   │   └── theme.ts     # MUI theme configuration
+│   ├── assets/
+│   │   ├── images/
+│   │   └── icons/
+│   └── pages/
+```
+
+## Figma Integration
+
+### Design Tokens Mapping
+
+- **Figma Colors** → MUI Theme Palette
+- **Figma Text Styles** → MUI Typography
+- **Figma Effects** → MUI Shadows
+- **Figma Components** → React Components
+
+### Workflow
+
+1. Design in Figma using design tokens
+2. Export specifications from Figma
+3. Implement in React using MUI components
+4. Match Figma specs exactly using theme customization
+
+## Component Specifications
+
+### Button
+
+- **Variants:** primary, secondary, outlined, text
+- **Sizes:** small (32px), medium (40px), large (48px)
+- **States:** default, hover, active, disabled, focus
+- **Specs:** See `docs/COMPONENTS_SPEC.md`
+
+### Input
+
+- **Types:** text, password, email, number, textarea
+- **States:** default, focus, error, disabled
+- **Features:** label, helper text, icons, validation
+- **Specs:** See `docs/COMPONENTS_SPEC.md`
+
+### Card
+
+- **Variants:** default, elevated, outlined
+- **Sections:** header, content, actions
+- **Specs:** See `docs/COMPONENTS_SPEC.md`
+
+## Accessibility
+
+### Requirements
+
+- **WCAG 2.1:** Minimum AA level
+- **Contrast:** 4.5:1 for text, 3:1 for large text
+- **Keyboard Navigation:** All interactive elements
+- **ARIA:** Proper labels and roles
+- **Focus Indicators:** Visible 2px outline
+
+## Responsive Design
+
+### Breakpoints
+
+- **xs:** 0px (mobile)
+- **sm:** 600px (tablet portrait)
+- **md:** 960px (tablet landscape)
+- **lg:** 1280px (desktop)
+- **xl:** 1920px (large screens)
+
+### Grid System
+
+- **Columns:** 12
+- **Gutter:** 16px
+- **Container Max Widths:** 600px (sm), 960px (md), 1280px (lg), 1920px (xl)
+
+## Documentation
+
+### Key Documents
+
+- `docs/STYLE_GUIDE.md` - Complete style guide
+- `docs/COMPONENTS_SPEC.md` - Component specifications
+- `docs/DESIGN_SYSTEM_USAGE.md` - Figma usage guide
+- `docs/DESIGN_SYSTEM_README.md` - Main README
