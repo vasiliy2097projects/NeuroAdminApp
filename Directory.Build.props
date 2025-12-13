@@ -1,0 +1,43 @@
+<Project>
+  <!--
+    Directory.Build.props для автоматического форматирования и общих настроек проекта
+    Этот файл автоматически применяется ко всем .NET проектам в репозитории
+  -->
+
+  <PropertyGroup>
+    <!-- Общие настройки проекта -->
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn> <!-- Подавляем предупреждения о отсутствии XML комментариев (можно включить позже) -->
+
+    <!-- Настройки компилятора для предупреждений -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>5</WarningLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Настройки для анализаторов кода -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+
+    <!-- Автоматическое форматирование при сборке -->
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <!-- EditorConfig используется автоматически для форматирования -->
+  </PropertyGroup>
+
+  <!-- NuGet пакеты для анализаторов кода (если нужно) -->
+  <ItemGroup Condition="'$(IsTestProject)' != 'true'">
+    <!-- Microsoft.CodeAnalysis.NetAnalyzers включены по умолчанию в .NET 5+ -->
+    <!-- Можно добавить дополнительные анализаторы здесь -->
+  </ItemGroup>
+
+  <!-- Исключения для тестовых проектов -->
+  <!-- IsTestProject автоматически определяется пакетом Microsoft.NET.Test.Sdk -->
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>
