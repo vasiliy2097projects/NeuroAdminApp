@@ -38,7 +38,7 @@ service-name/
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <!-- Directory.Build.props применяется автоматически -->
-  
+
   <PropertyGroup>
     <!-- RootNamespace должен быть PascalCase: ServiceName вместо service-name -->
     <RootNamespace>ServiceName</RootNamespace>
@@ -48,7 +48,7 @@ service-name/
     <!-- Стандартные пакеты -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.0" />
-    
+
     <!-- Дополнительные пакеты (если нужны) -->
     <PackageReference Include="Refit" Version="9.0.2" />
     <PackageReference Include="Refit.HttpClientFactory" Version="9.0.2" />
@@ -61,6 +61,7 @@ service-name/
 ```
 
 **Важно:**
+
 - Используется `Microsoft.NET.Sdk.Web` для API сервисов
 - Все общие настройки (TargetFramework, Nullable, и т.д.) берутся из `Directory.Build.props`
 - `RootNamespace` должен быть PascalCase
@@ -239,6 +240,7 @@ public class SomeController : ControllerBase
 ```
 
 **Важно:**
+
 - Используется file-scoped namespace
 - Всегда используется dependency injection
 - Всегда логируются ошибки через LoggerDefinitions
@@ -270,10 +272,7 @@ public class SomeController : ControllerBase
     "ValidateIssuerSigningKey": true
   },
   "Cors": {
-    "AllowedOrigins": [
-      "http://localhost:5173",
-      "http://localhost:3000"
-    ]
+    "AllowedOrigins": ["http://localhost:5173", "http://localhost:3000"]
   },
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=servicename_db;Username=postgres;Password=postgres"
@@ -312,6 +311,7 @@ public class SomeController : ControllerBase
 ```
 
 **Порты для сервисов:**
+
 - API Gateway: 5220 (http), 7191 (https)
 - Auth Service: 5001
 - Bot Detection Service: 5002
@@ -325,32 +325,39 @@ public class SomeController : ControllerBase
 ## 📝 Конвенции именования
 
 ### Namespace
+
 - **Формат:** `ServiceName` (PascalCase, без подчеркиваний)
 - **Пример:** `AuthService`, `BotDetectionService`, `TaskManagementService`
 - **Не используйте:** `auth_service`, `auth-service`, `Auth_Service`
 
 ### Классы
+
 - **Формат:** PascalCase
 - **Пример:** `AuthController`, `UserService`, `DatabaseContext`
 
 ### Интерфейсы
+
 - **Формат:** `I` + PascalCase
 - **Пример:** `IAuthService`, `IUserRepository`, `IDatabaseContext`
 
 ### Приватные поля
+
 - **Формат:** `_` + camelCase
 - **Пример:** `_authService`, `_logger`, `_configuration`
 
 ### Public статические readonly поля (LoggerMessage делегаты)
+
 - **Формат:** PascalCase (без префикса `_`)
 - **Пример:** `LogRegisterError`, `LogLoginError`
 - **Расположение:** В `Logging/LoggerDefinitions.cs`
 
 ### Методы
+
 - **Формат:** PascalCase
 - **Пример:** `GetUserAsync`, `CreateTaskAsync`, `ProcessRequest`
 
 ### Константы
+
 - **Формат:** PascalCase
 - **Пример:** `MaxRetryCount`, `DefaultTimeout`
 
@@ -359,33 +366,40 @@ public class SomeController : ControllerBase
 ## 📝 Структура папок и их назначение
 
 ### Controllers/
+
 - ASP.NET Core контроллеры для API endpoints
 - Каждый контроллер соответствует ресурсу или группе ресурсов
 - Пример: `AuthController`, `TasksController`, `UsersController`
 
 ### Services/
+
 - Бизнес-логика сервиса
 - Интерфейсы и их реализации
 - Пример: `IAuthService.cs`, `AuthService.cs`
 
 ### Configuration/
+
 - Классы конфигурации из appsettings.json
 - Пример: `ServiceUrls.cs`, `DatabaseOptions.cs`
 
 ### Middleware/
+
 - ASP.NET Core middleware
 - Пример: `ErrorHandlingMiddleware.cs`, `RequestLoggingMiddleware.cs`
 
 ### Logging/
+
 - Централизованные LoggerMessage делегаты
 - Файл: `LoggerDefinitions.cs`
 - Используется для всех логов в сервисе
 
 ### Models/
+
 - Модели данных (DTOs, Entities)
 - Пример: `UserDto.cs`, `TaskEntity.cs`, `CreateTaskRequest.cs`
 
 ### Data/ (если используется БД)
+
 - Контексты баз данных
 - Репозитории
 - Миграции
@@ -419,6 +433,7 @@ catch (Exception ex)
 ```
 
 **EventId диапазоны:**
+
 - 1000-1999: Auth Service
 - 2000-2999: Bot Detection Service
 - 3000-3999: Social Accounts (VK/OK)

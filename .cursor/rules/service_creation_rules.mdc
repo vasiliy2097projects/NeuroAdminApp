@@ -24,20 +24,23 @@ service-name/
 ## Конвенции именования
 
 ### Namespace (RootNamespace в .csproj)
-- **Формат:** PascalCase БЕЗ подчеркиваний
-- **Примеры:** `AuthService`, `BotDetectionService`, `TaskManagementService`
-- **НЕ использовать:** `auth_service`, `auth-service`, `Auth_Service`
+
+-   **Формат:** PascalCase БЕЗ подчеркиваний
+-   **Примеры:** `AuthService`, `BotDetectionService`, `TaskManagementService`
+-   **НЕ использовать:** `auth_service`, `auth-service`, `Auth_Service`
 
 ### Имена папок
-- **Формат:** kebab-case
-- **Примеры:** `api-gateway`, `auth-service`, `bot-detection-service`
+
+-   **Формат:** kebab-case
+-   **Примеры:** `api-gateway`, `auth-service`, `bot-detection-service`
 
 ### Классы и интерфейсы
-- Классы: PascalCase (`AuthController`, `UserService`)
-- Интерфейсы: `I` + PascalCase (`IAuthService`, `IUserRepository`)
-- Приватные поля: `_` + camelCase (`_authService`, `_logger`)
-- Public static readonly (LoggerMessage): PascalCase БЕЗ `_` (`LogRegisterError`)
-- Методы: PascalCase (`GetUserAsync`, `CreateTaskAsync`)
+
+-   Классы: PascalCase (`AuthController`, `UserService`)
+-   Интерфейсы: `I` + PascalCase (`IAuthService`, `IUserRepository`)
+-   Приватные поля: `_` + camelCase (`_authService`, `_logger`)
+-   Public static readonly (LoggerMessage): PascalCase БЕЗ `_` (`LogRegisterError`)
+-   Методы: PascalCase (`GetUserAsync`, `CreateTaskAsync`)
 
 ## Шаблон .csproj
 
@@ -57,8 +60,9 @@ service-name/
 ```
 
 **КРИТИЧНО:**
-- RootNamespace должен быть PascalCase (например, `AuthService`, а не `auth-service` или `auth_service`)
-- Используется `Microsoft.NET.Sdk.Web` для API сервисов
+
+-   RootNamespace должен быть PascalCase (например, `AuthService`, а не `auth-service` или `auth_service`)
+-   Используется `Microsoft.NET.Sdk.Web` для API сервисов
 
 ## Шаблон Program.cs
 
@@ -73,13 +77,14 @@ service-name/
 
 ## Контроллеры
 
-- Используй file-scoped namespaces
-- Всегда используй dependency injection
-- Всегда логируй ошибки через `LoggerDefinitions` из папки `Logging/`
-- Используй async/await для всех операций
-- Возвращай `ObjectResult` из методов `HandleRefitResponse` (для производительности)
+-   Используй file-scoped namespaces
+-   Всегда используй dependency injection
+-   Всегда логируй ошибки через `LoggerDefinitions` из папки `Logging/`
+-   Используй async/await для всех операций
+-   Возвращай `ObjectResult` из методов `HandleRefitResponse` (для производительности)
 
 Пример:
+
 ```csharp
 using ServiceName.Logging;
 using ServiceName.Services;
@@ -119,18 +124,19 @@ public class SomeController : ControllerBase
 
 ## Логирование
 
-- ВСЕГДА используй централизованные LoggerMessage делегаты из `Logging/LoggerDefinitions.cs`
-- НЕ создавай новые делегаты в контроллерах/сервисах - добавляй их в LoggerDefinitions.cs
-- Используй правильные диапазоны EventId:
-  - 1000-1999: Auth Service
-  - 2000-2999: Bot Detection Service
-  - 3000-3999: Social Accounts
-  - 4000-4999: Task Management Service
-  - 5000-5999: VK Service
-  - 6000-6999: OK Service
-  - 9000-9999: Common/Middleware
+-   ВСЕГДА используй централизованные LoggerMessage делегаты из `Logging/LoggerDefinitions.cs`
+-   НЕ создавай новые делегаты в контроллерах/сервисах - добавляй их в LoggerDefinitions.cs
+-   Используй правильные диапазоны EventId:
+    -   1000-1999: Auth Service
+    -   2000-2999: Bot Detection Service
+    -   3000-3999: Social Accounts
+    -   4000-4999: Task Management Service
+    -   5000-5999: VK Service
+    -   6000-6999: OK Service
+    -   9000-9999: Common/Middleware
 
 Формат делегата:
+
 ```csharp
 public static readonly Action<ILogger, Exception> LogOperationError =
     LoggerMessage.Define(
@@ -141,40 +147,45 @@ public static readonly Action<ILogger, Exception> LogOperationError =
 
 ## Порты для сервисов
 
-- API Gateway: 5220 (http), 7191 (https)
-- Auth Service: 5001
-- Bot Detection Service: 5002
-- VK Service: 5003
-- OK Service: 5004
-- Task Management Service: 5005
-- Новые сервисы: начиная с 5006
+-   API Gateway: 5220 (http), 7191 (https)
+-   Auth Service: 5001
+-   Bot Detection Service: 5002
+-   VK Service: 5003
+-   OK Service: 5004
+-   Task Management Service: 5005
+-   Новые сервисы: начиная с 5006
 
 ## Конфигурация
 
 ### appsettings.json
+
 Должен включать:
-- Logging секцию
-- AllowedHosts
-- ServiceUrls (если сервис вызывает другие)
-- Jwt (если требуется аутентификация)
-- Cors (если нужно)
-- ConnectionStrings (если используется БД)
+
+-   Logging секцию
+-   AllowedHosts
+-   ServiceUrls (если сервис вызывает другие)
+-   Jwt (если требуется аутентификация)
+-   Cors (если нужно)
+-   ConnectionStrings (если используется БД)
 
 ### launchSettings.json
-- http профиль: `http://localhost:5XXX`
-- https профиль: `https://localhost:7XXX;http://localhost:5XXX`
+
+-   http профиль: `http://localhost:5XXX`
+-   https профиль: `https://localhost:7XXX;http://localhost:5XXX`
 
 ## Тестирование
 
 Создавай проект тестов:
-- Имя: `service-name-tests`
-- Проект файл: `service-name.Tests.csproj`
-- RootNamespace: `ServiceName.Tests`
-- Используй xUnit, Moq, FluentAssertions
+
+-   Имя: `service-name-tests`
+-   Проект файл: `service-name.Tests.csproj`
+-   RootNamespace: `ServiceName.Tests`
+-   Используй xUnit, Moq, FluentAssertions
 
 ## Интеграция с другими сервисами
 
 Если сервис вызывает другой сервис:
+
 1. Создай Refit интерфейс в папке `Services/`
 2. Имя: `I[ServiceName]Client`
 3. Используй атрибуты Refit: `[Get]`, `[Post]`, `[Header]`, `[Body]`
@@ -183,6 +194,7 @@ public static readonly Action<ILogger, Exception> LogOperationError =
 ## Обновление зависимостей
 
 После создания нового сервиса:
+
 1. Добавь URL в `api-gateway/Configuration/ServiceUrls.cs`
 2. Обнови `api-gateway/appsettings.json`
 3. Добавь Refit клиент в `api-gateway/Program.cs` (если вызывается из gateway)
@@ -201,6 +213,6 @@ public static readonly Action<ILogger, Exception> LogOperationError =
 
 ## Ссылки
 
-- Полный шаблон: `docs/SERVICE_TEMPLATE.md`
-- Правила форматирования: `.editorconfig`
-- Общие настройки: `Directory.Build.props`
+-   Полный шаблон: `docs/SERVICE_TEMPLATE.md`
+-   Правила форматирования: `.editorconfig`
+-   Общие настройки: `Directory.Build.props`

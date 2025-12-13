@@ -1,7 +1,7 @@
+using ApiGateway.Logging;
 using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ApiGateway.Controllers;
 
@@ -15,36 +15,6 @@ public class BotDetectionController : ControllerBase
 {
     private readonly IBotDetectionServiceClient _botDetectionServiceClient;
     private readonly ILogger<BotDetectionController> _logger;
-
-    private static readonly Action<ILogger, Exception> LogStartAnalysisError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(1, "StartAnalysisError"),
-            "Error calling bot detection service start analysis");
-
-    private static readonly Action<ILogger, Exception> LogGetAnalysesError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(2, "GetAnalysesError"),
-            "Error calling bot detection service get analyses");
-
-    private static readonly Action<ILogger, Exception> LogGetAnalysisError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(3, "GetAnalysisError"),
-            "Error calling bot detection service get analysis");
-
-    private static readonly Action<ILogger, Exception> LogGetAnalysisResultsError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(4, "GetAnalysisResultsError"),
-            "Error calling bot detection service get analysis results");
-
-    private static readonly Action<ILogger, Exception> LogDeleteAnalysisError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(5, "DeleteAnalysisError"),
-            "Error calling bot detection service delete analysis");
 
     public BotDetectionController(IBotDetectionServiceClient botDetectionServiceClient, ILogger<BotDetectionController> logger)
     {
@@ -63,7 +33,7 @@ public class BotDetectionController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogStartAnalysisError(_logger, ex);
+            LoggerDefinitions.LogStartAnalysisError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -79,7 +49,7 @@ public class BotDetectionController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetAnalysesError(_logger, ex);
+            LoggerDefinitions.LogGetAnalysesError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -95,7 +65,7 @@ public class BotDetectionController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetAnalysisError(_logger, ex);
+            LoggerDefinitions.LogGetAnalysisError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -111,7 +81,7 @@ public class BotDetectionController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetAnalysisResultsError(_logger, ex);
+            LoggerDefinitions.LogGetAnalysisResultsError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -127,7 +97,7 @@ public class BotDetectionController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogDeleteAnalysisError(_logger, ex);
+            LoggerDefinitions.LogDeleteAnalysisError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }

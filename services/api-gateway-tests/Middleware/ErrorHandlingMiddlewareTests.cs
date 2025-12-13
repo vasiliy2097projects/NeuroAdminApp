@@ -51,7 +51,7 @@ public class ErrorHandlingMiddlewareTests
         // Assert
         context.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         context.Response.ContentType.Should().Be("application/json");
-        
+
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync();
@@ -74,7 +74,7 @@ public class ErrorHandlingMiddlewareTests
         // Assert
         context.Response.StatusCode.Should().Be((int)HttpStatusCode.BadGateway);
         context.Response.ContentType.Should().Be("application/json");
-        
+
         context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(context.Response.Body);
         var responseBody = await reader.ReadToEndAsync();

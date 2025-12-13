@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
+using ApiGateway.Logging;
 
 namespace ApiGateway.Middleware;
 
@@ -11,12 +11,6 @@ public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    private static readonly Action<ILogger, Exception> LogUnhandledException =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(1, "UnhandledException"),
-            "An unhandled exception occurred");
 
     public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
     {
@@ -34,7 +28,7 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            LogUnhandledException(_logger, ex);
+            LoggerDefinitions.LogUnhandledException(_logger, ex);
             await HandleExceptionAsync(context, ex);
         }
     }
