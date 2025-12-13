@@ -24,7 +24,8 @@
     <AnalysisMode>Recommended</AnalysisMode>
 
     <!-- Автоматическое форматирование при сборке -->
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <!-- RunCodeAnalysis НЕ используется - устаревший FxCop не поддерживает .NET 9 -->
+    <!-- Анализаторы кода работают автоматически через EnableNETAnalyzers -->
     <!-- EditorConfig используется автоматически для форматирования -->
   </PropertyGroup>
 
@@ -38,6 +39,9 @@
   <!-- IsTestProject автоматически определяется пакетом Microsoft.NET.Test.Sdk -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Подавляем предупреждения о подчеркиваниях в именах (это нормально для тестов) -->
+    <!-- CA1707 - подчеркивания в именах, CA2201 - использование Exception (нормально для тестов) -->
+    <NoWarn>$(NoWarn);CA1707;CA2201</NoWarn>
   </PropertyGroup>
 
 </Project>
