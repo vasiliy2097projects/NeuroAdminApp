@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Ограничиваем количество одновременных PR, чтобы не перегружать команду
+    open-pull-requests-limit: 5
+    # Настраиваем сообщения коммитов
+    commit-message:
+      # Добавляем префикс для лучшей фильтрации в истории
+      prefix: "[deps]"
+      # Включаем тип обновления (например, "deps: nuget")
+      include: "scope"
+    # Назначаем ответственных за ревью (укажите реальные логины)
+    assignees:
+      - "vasiliy2097projects"
