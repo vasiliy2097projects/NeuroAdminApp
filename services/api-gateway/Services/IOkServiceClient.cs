@@ -8,6 +8,7 @@ namespace api_gateway.Services;
 public interface IOkServiceClient
 {
     [Get("/api/ok/users/{userId}/profile")]
+
     Task<IApiResponse<object>> GetUserProfileAsync(string userId, [Header("Authorization")] string? authorization);
 
     [Get("/api/ok/users/{userId}/followers")]

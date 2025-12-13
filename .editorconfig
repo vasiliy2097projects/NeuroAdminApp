@@ -154,6 +154,10 @@ dotnet_diagnostic.CA1305.severity = warning
 dotnet_diagnostic.CA1307.severity = warning
 dotnet_diagnostic.CA1724.severity = none
 dotnet_diagnostic.CA1812.severity = warning
+# Подавляем предупреждения о подчеркиваниях в namespace (стиль проекта api_gateway)
+dotnet_diagnostic.CA1707.severity = none
+# Подавляем предупреждения о LoggerMessage (можно оптимизировать позже)
+dotnet_diagnostic.CA1848.severity = suggestion
 
 # ==========================================
 # XML файлы (проекты, конфиги)

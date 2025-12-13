@@ -90,7 +90,7 @@ public class SocialAccountsController : ControllerBase
         }
     }
 
-    private IActionResult HandleRefitResponse(Refit.IApiResponse<object> response)
+    private ObjectResult HandleRefitResponse(Refit.IApiResponse<object> response)
     {
         // For error responses, content is in Error.Content, not Content
         var content = response.IsSuccessStatusCode ? response.Content : response.Error?.Content ?? response.Content;
