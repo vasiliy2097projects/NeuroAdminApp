@@ -5,7 +5,7 @@ permissions:
 
 on:
   push:
-    branches: [main, develop, "feature/**"]
+    branches: [main, develop, "feature/**", "dependabot/**"]
 
 jobs:
   build-and-test:
