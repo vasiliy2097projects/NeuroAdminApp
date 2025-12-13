@@ -1,14 +1,14 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using api_gateway.Middleware;
+using ApiGateway.Middleware;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace api_gateway.Tests.Middleware;
+namespace ApiGateway.Tests.Middleware;
 
 public class ErrorHandlingMiddlewareTests
 {

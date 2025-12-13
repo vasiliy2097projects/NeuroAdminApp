@@ -1,8 +1,9 @@
-using api_gateway.Services;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace api_gateway.Controllers;
+namespace ApiGateway.Controllers;
 
 /// <summary>
 /// Контроллер для проксирования запросов к VK и OK Services
@@ -15,6 +16,30 @@ public class SocialAccountsController : ControllerBase
     private readonly IVkServiceClient _vkServiceClient;
     private readonly IOkServiceClient _okServiceClient;
     private readonly ILogger<SocialAccountsController> _logger;
+
+    private static readonly Action<ILogger, Exception> LogGetVkUserProfileError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(1, "GetVkUserProfileError"),
+            "Error calling VK service get user profile");
+
+    private static readonly Action<ILogger, Exception> LogGetVkFollowersError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(2, "GetVkFollowersError"),
+            "Error calling VK service get followers");
+
+    private static readonly Action<ILogger, Exception> LogGetOkUserProfileError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(3, "GetOkUserProfileError"),
+            "Error calling OK service get user profile");
+
+    private static readonly Action<ILogger, Exception> LogGetOkFollowersError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(4, "GetOkFollowersError"),
+            "Error calling OK service get followers");
 
     public SocialAccountsController(
         IVkServiceClient vkServiceClient,
@@ -37,7 +62,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling VK service get user profile");
+            LogGetVkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -53,7 +78,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling VK service get followers");
+            LogGetVkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -69,7 +94,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling OK service get user profile");
+            LogGetOkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -85,7 +110,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling OK service get followers");
+            LogGetOkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }

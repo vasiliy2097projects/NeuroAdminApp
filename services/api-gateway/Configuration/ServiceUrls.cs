@@ -1,4 +1,4 @@
-namespace api_gateway.Configuration;
+namespace ApiGateway.Configuration;
 
 /// <summary>
 /// Конфигурация URLs микросервисов

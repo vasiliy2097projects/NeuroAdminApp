@@ -1,7 +1,8 @@
-using api_gateway.Services;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace api_gateway.Controllers;
+namespace ApiGateway.Controllers;
 
 /// <summary>
 /// Контроллер для проксирования запросов к Auth Service
@@ -12,6 +13,36 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthServiceClient _authServiceClient;
     private readonly ILogger<AuthController> _logger;
+
+    private static readonly Action<ILogger, Exception> LogRegisterError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(1, "RegisterError"),
+            "Error calling auth service register");
+
+    private static readonly Action<ILogger, Exception> LogLoginError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(2, "LoginError"),
+            "Error calling auth service login");
+
+    private static readonly Action<ILogger, Exception> LogRefreshTokenError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(3, "RefreshTokenError"),
+            "Error calling auth service refresh token");
+
+    private static readonly Action<ILogger, Exception> LogLogoutError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(4, "LogoutError"),
+            "Error calling auth service logout");
+
+    private static readonly Action<ILogger, Exception> LogGetCurrentUserError =
+        LoggerMessage.Define(
+            LogLevel.Error,
+            new EventId(5, "GetCurrentUserError"),
+            "Error calling auth service get current user");
 
     public AuthController(IAuthServiceClient authServiceClient, ILogger<AuthController> logger)
     {
@@ -29,7 +60,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service register");
+            LogRegisterError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -44,7 +75,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service login");
+            LogLoginError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -59,7 +90,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service refresh token");
+            LogRefreshTokenError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -76,7 +107,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service logout");
+            LogLogoutError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -93,7 +124,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling auth service get current user");
+            LogGetCurrentUserError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }

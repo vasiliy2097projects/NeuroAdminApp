@@ -1,7 +1,7 @@
 using System.Text;
-using api_gateway.Configuration;
-using api_gateway.Middleware;
-using api_gateway.Services;
+using ApiGateway.Configuration;
+using ApiGateway.Middleware;
+using ApiGateway.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
