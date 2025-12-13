@@ -1,7 +1,7 @@
+using ApiGateway.Logging;
 using ApiGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ApiGateway.Controllers;
 
@@ -16,30 +16,6 @@ public class SocialAccountsController : ControllerBase
     private readonly IVkServiceClient _vkServiceClient;
     private readonly IOkServiceClient _okServiceClient;
     private readonly ILogger<SocialAccountsController> _logger;
-
-    private static readonly Action<ILogger, Exception> LogGetVkUserProfileError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(1, "GetVkUserProfileError"),
-            "Error calling VK service get user profile");
-
-    private static readonly Action<ILogger, Exception> LogGetVkFollowersError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(2, "GetVkFollowersError"),
-            "Error calling VK service get followers");
-
-    private static readonly Action<ILogger, Exception> LogGetOkUserProfileError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(3, "GetOkUserProfileError"),
-            "Error calling OK service get user profile");
-
-    private static readonly Action<ILogger, Exception> LogGetOkFollowersError =
-        LoggerMessage.Define(
-            LogLevel.Error,
-            new EventId(4, "GetOkFollowersError"),
-            "Error calling OK service get followers");
 
     public SocialAccountsController(
         IVkServiceClient vkServiceClient,
@@ -62,7 +38,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetVkUserProfileError(_logger, ex);
+            LoggerDefinitions.LogGetVkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -78,7 +54,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetVkFollowersError(_logger, ex);
+            LoggerDefinitions.LogGetVkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -94,7 +70,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetOkUserProfileError(_logger, ex);
+            LoggerDefinitions.LogGetOkUserProfileError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
@@ -110,7 +86,7 @@ public class SocialAccountsController : ControllerBase
         }
         catch (Exception ex)
         {
-            LogGetOkFollowersError(_logger, ex);
+            LoggerDefinitions.LogGetOkFollowersError(_logger, ex);
             return StatusCode(500, new { error = "Internal server error" });
         }
     }
