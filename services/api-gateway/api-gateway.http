@@ -1,6 +1,82 @@
 @api_gateway_HostAddress = http://localhost:5220
+@api_gateway_HttpsAddress = https://localhost:7191
 
-GET {{api_gateway_HostAddress}}/weatherforecast/
+### Health Check (if available)
+GET {{api_gateway_HostAddress}}/
 Accept: application/json
 
-###
+### Register User
+POST {{api_gateway_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### Login
+POST {{api_gateway_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!"
+}
+
+### Get Current User (requires JWT token)
+# @name login
+POST {{api_gateway_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!"
+}
+
+### Extract token from login response and use it
+GET {{api_gateway_HostAddress}}/api/auth/me
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: application/json
+
+### Refresh Token
+POST {{api_gateway_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+### Logout (requires JWT token)
+POST {{api_gateway_HostAddress}}/api/auth/logout
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+}
+
+### Get Bot Detection Analyses (requires JWT token)
+GET {{api_gateway_HostAddress}}/api/botdetection/analyses
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: application/json
+
+### Start Bot Analysis (requires JWT token)
+POST {{api_gateway_HostAddress}}/api/botdetection/analyze
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "socialAccountId": "guid-here",
+  "socialNetwork": "VK"
+}
+
+### Get VK User Profile (requires JWT token)
+GET {{api_gateway_HostAddress}}/api/socialaccounts/vk/users/12345/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: application/json
+
+### Get OK User Profile (requires JWT token)
+GET {{api_gateway_HostAddress}}/api/socialaccounts/ok/users/12345/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Accept: application/json

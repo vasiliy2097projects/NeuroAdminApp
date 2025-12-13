@@ -41,9 +41,9 @@ builder.Services.AddCors(options =>
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 // Secret key should come from environment variables or user secrets, not from config file
-var secretKey = builder.Configuration["JWT_SECRET_KEY"] 
+var secretKey = builder.Configuration["JWT_SECRET_KEY"]
     ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
-    ?? jwtSettings["SecretKey"] 
+    ?? jwtSettings["SecretKey"]
     ?? throw new InvalidOperationException("JWT SecretKey is not configured. Set JWT_SECRET_KEY environment variable or use User Secrets.");
 var issuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer is not configured");
 var audience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience is not configured");
