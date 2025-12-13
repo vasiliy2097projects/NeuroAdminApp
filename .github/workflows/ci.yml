@@ -6,6 +6,8 @@ permissions:
 on:
   push:
     branches: [main, develop, "feature/**", "dependabot/**"]
+  pull_request:
+    branches: [main, develop, "feature/**", "dependabot/**"]
 
 jobs:
   build-and-test:
