@@ -28,7 +28,7 @@ public class BotDetectionController : ControllerBase
         {
             var token = Request.Headers["Authorization"].ToString();
             var response = await _botDetectionServiceClient.StartAnalysisAsync(request, token);
-            return StatusCode((int)response.StatusCode, response.Content);
+            return HandleRefitResponse(response);
         }
         catch (Exception ex)
         {
@@ -44,7 +44,7 @@ public class BotDetectionController : ControllerBase
         {
             var token = Request.Headers["Authorization"].ToString();
             var response = await _botDetectionServiceClient.GetAnalysesAsync(token);
-            return StatusCode((int)response.StatusCode, response.Content);
+            return HandleRefitResponse(response);
         }
         catch (Exception ex)
         {
@@ -60,7 +60,7 @@ public class BotDetectionController : ControllerBase
         {
             var token = Request.Headers["Authorization"].ToString();
             var response = await _botDetectionServiceClient.GetAnalysisAsync(id, token);
-            return StatusCode((int)response.StatusCode, response.Content);
+            return HandleRefitResponse(response);
         }
         catch (Exception ex)
         {
@@ -76,7 +76,7 @@ public class BotDetectionController : ControllerBase
         {
             var token = Request.Headers["Authorization"].ToString();
             var response = await _botDetectionServiceClient.GetAnalysisResultsAsync(id, token);
-            return StatusCode((int)response.StatusCode, response.Content);
+            return HandleRefitResponse(response);
         }
         catch (Exception ex)
         {
@@ -92,12 +92,19 @@ public class BotDetectionController : ControllerBase
         {
             var token = Request.Headers["Authorization"].ToString();
             var response = await _botDetectionServiceClient.DeleteAnalysisAsync(id, token);
-            return StatusCode((int)response.StatusCode, response.Content);
+            return HandleRefitResponse(response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calling bot detection service delete analysis");
             return StatusCode(500, new { error = "Internal server error" });
         }
+    }
+
+    private IActionResult HandleRefitResponse(Refit.IApiResponse<object> response)
+    {
+        // For error responses, content is in Error.Content, not Content
+        var content = response.IsSuccessStatusCode ? response.Content : response.Error?.Content ?? response.Content;
+        return StatusCode((int)response.StatusCode, content);
     }
 }

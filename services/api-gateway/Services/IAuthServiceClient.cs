@@ -17,7 +17,7 @@ public interface IAuthServiceClient
     Task<IApiResponse<object>> RefreshTokenAsync([Body] object request);
 
     [Post("/api/auth/logout")]
-    Task<IApiResponse<object>> LogoutAsync([Body] object request);
+    Task<IApiResponse<object>> LogoutAsync([Body] object request, [Header("Authorization")] string? authorization);
 
     [Get("/api/account/me")]
     Task<IApiResponse<object>> GetCurrentUserAsync([Header("Authorization")] string? authorization);

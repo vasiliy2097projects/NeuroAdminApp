@@ -40,7 +40,11 @@ builder.Services.AddCors(options =>
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
+// Secret key should come from environment variables or user secrets, not from config file
+var secretKey = builder.Configuration["JWT_SECRET_KEY"] 
+    ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+    ?? jwtSettings["SecretKey"] 
+    ?? throw new InvalidOperationException("JWT SecretKey is not configured. Set JWT_SECRET_KEY environment variable or use User Secrets.");
 var issuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer is not configured");
 var audience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience is not configured");
 
@@ -62,11 +66,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Configure Polly policies for resilience
+// Retry policy can be shared (stateless)
 var retryPolicy = HttpPolicyExtensions
     .HandleTransientHttpError()
     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-var circuitBreakerPolicy = HttpPolicyExtensions
+// Each service needs its own circuit breaker (stateful) to isolate failures
+var authCircuitBreaker = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+
+var botDetectionCircuitBreaker = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+
+var vkCircuitBreaker = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+
+var okCircuitBreaker = HttpPolicyExtensions
     .HandleTransientHttpError()
     .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
 
@@ -74,22 +92,22 @@ var circuitBreakerPolicy = HttpPolicyExtensions
 builder.Services.AddRefitClient<IAuthServiceClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(serviceUrls.AuthServiceUrl))
     .AddPolicyHandler(retryPolicy)
-    .AddPolicyHandler(circuitBreakerPolicy);
+    .AddPolicyHandler(authCircuitBreaker);
 
 builder.Services.AddRefitClient<IBotDetectionServiceClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(serviceUrls.BotDetectionServiceUrl))
     .AddPolicyHandler(retryPolicy)
-    .AddPolicyHandler(circuitBreakerPolicy);
+    .AddPolicyHandler(botDetectionCircuitBreaker);
 
 builder.Services.AddRefitClient<IVkServiceClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(serviceUrls.VkServiceUrl))
     .AddPolicyHandler(retryPolicy)
-    .AddPolicyHandler(circuitBreakerPolicy);
+    .AddPolicyHandler(vkCircuitBreaker);
 
 builder.Services.AddRefitClient<IOkServiceClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri(serviceUrls.OkServiceUrl))
     .AddPolicyHandler(retryPolicy)
-    .AddPolicyHandler(circuitBreakerPolicy);
+    .AddPolicyHandler(okCircuitBreaker);
 
 var app = builder.Build();
 
@@ -101,13 +119,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Add error handling middleware early in pipeline to catch all exceptions
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Add error handling middleware
-app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 
