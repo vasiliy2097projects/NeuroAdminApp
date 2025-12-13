@@ -26,11 +26,4 @@ jobs:
       run: dotnet build NeuroAdminApp.sln --no-restore --configuration Release
       
     - name: Run tests
-      run: dotnet test NeuroAdminApp.sln --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
-      
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      if: always()
-      with:
-        files: '**/coverage.cobertura.xml'
-        fail_ci_if_error: false
+      run: dotnet test NeuroAdminApp.sln --no-build --configuration Release --verbosity normal
