@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore NeuroAdminApp.sln
+      
+    - name: Build solution
+      run: dotnet build NeuroAdminApp.sln --no-restore --configuration Release
+      
+    - name: Run tests
+      run: dotnet test NeuroAdminApp.sln --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+      
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: always()
+      with:
+        files: '**/coverage.cobertura.xml'
+        fail_ci_if_error: false
